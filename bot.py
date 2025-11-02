@@ -1,7 +1,7 @@
 import os
 import logging
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
+from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextType
 from dotenv import load_dotenv
 
 # Load environment variables
@@ -37,12 +37,14 @@ We will help You To Recover Your Losses, Just Join our 20$ To 2000$ Compounding 
 💥 Join the Winning Team NOW! 💥
 ⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️⬇️
 
+https://t.me/+eabn_K2wO6kwNjQ9
+
 https://t.me/+eabn_K2wO6kwNjQ9"""
 
-# Completion message
-COMPLETION_MESSAGE = "Done! Congratulations on your new bot."
+# Done message
+DONE_MESSAGE = "Done! Congratulations on your new bot."
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def start(update: Update, context: ContextType.DEFAULT_TYPE) -> None:
     """Send a message with the image and a button when the command /start is issued."""
     
     # Create inline keyboard with button
@@ -54,11 +56,11 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     # Send photo with caption and button
     await update.message.reply_photo(
         photo=IMAGE_URL,
-        caption="Click the button below to see our amazing offers! 👇",
+        caption="Click the button below to see our amazing offer! 👇",
         reply_markup=reply_markup
     )
 
-async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def button_handler(update: Update, context: ContextType.DEFAULT_TYPE) -> None:
     """Handle the button click."""
     query = update.callback_query
     
@@ -66,13 +68,19 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     await query.answer()
     
     if query.data == "show_content":
-        # Edit the original message to show completion message
-        await query.edit_message_caption(caption=COMPLETION_MESSAGE)
+        # Edit the message to show the main content
+        await query.edit_message_caption(
+            caption=MAIN_MESSAGE,
+            reply_markup=None  # Remove the button after click
+        )
         
-        # Send the main content as a new message
-        await query.message.reply_text(MAIN_MESSAGE)
+        # Send the "Done" message as a new message
+        await context.bot.send_message(
+            chat_id=query.message.chat_id,
+            text=DONE_MESSAGE
+        )
 
-async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def help_command(update: Update, context: ContextType.DEFAULT_TYPE) -> None:
     """Send a message when the command /help is issued."""
     await update.message.reply_text("Use /start to begin!")
 
